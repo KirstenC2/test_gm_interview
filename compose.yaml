@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_USER: test_user
+      MYSQL_ROOT_PASSWORD: test_password
+      MYSQL_DATABASE: inventory
+      MYSQL_PASSWORD: pwd_password
+    ports:
+      - "33066:33066"
+    volumes:
+      - mysqlData:/var/lib/mysql
+
+volumes:
+  mysqlData:
