@@ -32,44 +32,52 @@ def create_app():
         return jsonify({"message": "Item created successfully"}), 201
 
 
-    @app.route('/Items/<code>', methods=['GET'])
-    def get_Item(code):
-        Item = Item.query.filter_by(code=code).first()
-        if not Item:
-            return jsonify({'error': 'Not found'}), 404
-        return jsonify({
-            "name": Item.name,
-            "code": Item.code,
-            "category": Item.category,
-            "size": Item.size,               # Already a list
-            "unit_price": Item.unit_price,
-            "inventory": Item.inventory,
-            "color": Item.color              # Already a list
-        })
+    @app.route('/Items/<int:item_id>', methods=['GET'])
+    def get_item_by_id(item_id):
+        print(item_id)
+        item = Item.query.get(item_id)
+        if item:
+            return jsonify(item.to_dict())
+        else:
+            return jsonify({'error': 'Item not found'}), 404
+
+    @app.route('/Items', methods=['GET'])
+    def get_all_items():
+        items = Item.query.all()
+        return jsonify([item.to_dict() for item in items])
+
+
 
     @app.route('/Items/<code>', methods=['PUT'])
-    def update_Item(code):
-        Item = Item.query.filter_by(code=code).first()
-        if not Item:
-            return jsonify({'error': 'Not found'}), 404
-        data = request.json
-        Item.name = data['name']
-        Item.category = data['category']
-        Item.size = data['size']
-        Item.unit_price = data['unit_price']
-        Item.inventory = data['inventory']
-        Item.color = data['color']
-        database.session.commit()
-        return jsonify(data)
+    def update_Item():
+        data = request.get_json()
+        code = data.get('code')
+        item = Item.query.filter_by(code=code).first()  # ✅ Use a different name for the instance
 
-    @app.route('/Items/<code>', methods=['DELETE'])
-    def delete_Item(code):
-        Item = Item.query.filter_by(code=code).first()
-        if not Item:
-            return jsonify({'error': 'Not found'}), 404
-        database.session.delete(Item)
-        database.session.commit()
-        return jsonify({'message': 'Deleted'}), 200
+        if item:
+            item.name = data.get('name', item.name)
+            item.category = data.get('category', item.category)
+            item.size = data.get('size', item.size)
+            item.unit_price = data.get('unit_price', item.unit_price)
+            item.inventory = data.get('inventory', item.inventory)
+            item.color = data.get('color', item.color)
+
+            database.session.commit()
+            return jsonify(item.to_dict())
+        else:
+            return jsonify({'error': 'Item not found'}), 404
+
+
+    @app.route('/Items/<int:item_id>', methods=['DELETE'])
+    def delete_item(item_id):
+        item = Item.query.filter_by(id=item_id).first()
+        if item:
+            database.session.delete(item)
+            database.session.commit()
+            return jsonify({'message': 'Item deleted'})
+        else:
+            return jsonify({'error': 'Item not found'}), 404
+
 
     return app
 
