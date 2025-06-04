@@ -34,8 +34,7 @@ def create_app():
 
     @app.route('/Items/<int:item_id>', methods=['GET'])
     def get_item_by_id(item_id):
-        print(item_id)
-        item = Item.query.get(item_id)
+        item = Item.query.filter_by(id=item_id).first()
         if item:
             return jsonify(item.to_dict())
         else:
@@ -48,11 +47,10 @@ def create_app():
 
 
 
-    @app.route('/Items/<code>', methods=['PUT'])
-    def update_Item():
+    @app.route('/Items/<int:item_id>', methods=['PUT'])
+    def update_item(item_id):
         data = request.get_json()
-        code = data.get('code')
-        item = Item.query.filter_by(code=code).first()  # ✅ Use a different name for the instance
+        item = Item.query.filter_by(id=item_id).first()
 
         if item:
             item.name = data.get('name', item.name)
@@ -66,6 +64,7 @@ def create_app():
             return jsonify(item.to_dict())
         else:
             return jsonify({'error': 'Item not found'}), 404
+
 
 
     @app.route('/Items/<int:item_id>', methods=['DELETE'])

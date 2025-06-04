@@ -50,14 +50,38 @@ Then select the table
 SELECT * FROM inventory.item;
 ```
 
-## API: to get all items
+## API: to get all items (GET)
 
 ```
-http://localhost:8081/Items
+curl http://localhost:8081/Items
 ```
 
-## API: to delete items
+## API : to get specific item (GET)
+```
+curl http://localhost:8081/Items/(:id)
+```
+
+## API: to delete items (DELETE)
 ```
 http://localhost:8081/Items/{:id}
 ```
 * put the item's id from database table to delete it.
+
+## API： to update items (PUT)
+```
+http://localhost:8081/Items/{}:id
+```
+body json
+```
+{
+  "name": "111 Mouse",
+  "code": "A-111",
+  "category": "Electronics",
+  "size": ["small", "medium"],
+  "unit_price": 34,
+  "inventory": 3245,
+  "color": ["black", "white"]
+}
+```
+
+
