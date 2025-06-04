@@ -1,14 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
+from db_conn import database
+from sqlalchemy.dialects.mysql import JSON
 
-database = SQLAlchemy()
-
-class Item(db.Item):
+class Item(database.Model):
     __table_name__ = "inventory"
     id = database.Column(database.Integer, primary_key = True)
-    name = database.Column(database.String, nullable = False)
-    code = database.Column(database.String, nullable = False)
-    category = database.Column(database.String, nullable = False)
-    size = database.Column(database.ARRAY(database.String),nullable = False)
-    unit_price = database.Column(database.float, nullable = False)
+    name = database.Column(database.String(50), nullable = False)
+    code = database.Column(database.String(15), nullable = False)
+    category = database.Column(database.String(15), nullable = False)
+    size = database.Column(JSON,nullable = False)
+    unit_price = database.Column(database.Integer, nullable = False)
     inventory = database.Column(database.Integer, nullable = False)
-    color = database.Column(database.ARRAY(database.String),nullable = False)
+    color = database.Column(JSON,nullable = False)

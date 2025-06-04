@@ -1,17 +1,27 @@
-version: "3.9"
-
 services:
   database:
     image: mysql:8.0
     environment:
-      MYSQL_USER: test_user
       MYSQL_ROOT_PASSWORD: test_password
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: test_password
       MYSQL_DATABASE: inventory
-      MYSQL_PASSWORD: pwd_password
     ports:
-      - "33066:33066"
+      - "3306:3306"
     volumes:
       - mysqlData:/var/lib/mysql
+
+  web:
+    build: ./rest_api
+    container_name: flask_api_server
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - "8081:8081"
+    environment:
+      FLASK_ENV: development
+    command: flask run --host=0.0.0.0 --port=8081
 
 volumes:
   mysqlData:
